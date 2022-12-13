@@ -6,7 +6,7 @@ module.exports = {
   solidity: "0.8.7",
   networks: {
     testnet: {
-      url: "https://bsctestapi.terminet.io/rpc",
+      url: "https://data-seed-prebsc-1-s3.binance.org:8545",
       chainId: 97,
       accounts: {
         mnemonic: process.env.MNEMONIC,

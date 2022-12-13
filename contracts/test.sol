@@ -10,10 +10,34 @@ contract Token {
     string public name = "DOOM";
     string public symbol = "DT";
     uint8 public decimal = 18;
+    uint16 private PRIZE_FOR_YEARE = 10;
+    struct Stake {
+        uint256 amount;
+        uint256 timestamp;
+    }
+    mapping(address => Stake) private stakes;
 
     constructor() {
         owner = msg.sender;
         mint();
+    }
+
+    function staking(uint256 amount) external returns (bool) {
+        require(!blackList[msg.sender], "You are in blackList");
+        require(balancOf[msg.sender] >= amount, "You don't have enough money");
+        stakes[msg.sender] = Stake(amount, block.timestamp);
+        balancOf[msg.sender] -= amount;
+        return true;
+    }
+
+    function getAllFromStaking() external returns (uint) {
+        require(!blackList[msg.sender], "You are in blackList");
+        require(stakes[msg.sender].amount != 0, "You don't have stake money");
+        uint days_lying = ((block.timestamp - stakes[msg.sender].timestamp) / (3600 * 24));
+        uint bonus = ((stakes[msg.sender].amount*days_lying)/365)/PRIZE_FOR_YEARE;
+        balancOf[msg.sender] += stakes[msg.sender].amount + bonus;
+        stakes[msg.sender].amount = 0;
+        return bonus;
     }
 
     function addToBlackList(address bad_guy) external returns (bool) {
